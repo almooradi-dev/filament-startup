@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('post_statuses', function (Blueprint $table) {
+        Schema::create('post_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('key')->unique();
-            $table->string('color');
             $table->tinyInteger('is_active')->default(0);
             $table->timestamps();
             $table->softDeletes();
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('post_statuses');
+        Schema::dropIfExists('post_types');
     }
 };

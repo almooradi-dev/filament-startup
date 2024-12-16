@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Translatable\HasTranslations;
 
-class Collection extends Model
+class PostCollection extends Model
 {
     use SoftDeletes, HasTranslations;
 

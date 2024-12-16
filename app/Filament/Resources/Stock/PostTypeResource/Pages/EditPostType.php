@@ -1,16 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\Stock\TagResource\Pages;
+namespace App\Filament\Resources\Stock\PostTypeResource\Pages;
 
-use App\Filament\Resources\Stock\TagResource;
+use App\Filament\Resources\Stock\PostTypeResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditTag extends EditRecord
+class EditPostType extends EditRecord
 {
-    use EditRecord\Concerns\Translatable;
-
-    protected static string $resource = TagResource::class;
+    protected static string $resource = PostTypeResource::class;
 
     protected function getHeaderActions(): array
     {

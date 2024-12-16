@@ -2,25 +2,30 @@
 
 namespace App\Filament\Resources\Stock;
 
-use App\Filament\Resources\Stock\CollectionResource\Pages;
-use App\Filament\Resources\Stock\CollectionResource\RelationManagers;
-use App\Models\Stock\Collection;
+use App\Filament\Resources\Stock\PostTypeResource\Pages;
+use App\Filament\Resources\Stock\PostTypeResource\RelationManagers;
+use App\Models\Stock\PostType;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
-use Filament\Resources\Concerns\Translatable;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
-class CollectionResource extends Resource
+class PostTypeResource extends Resource
 {
-    use Translatable;
-    
-    protected static ?string $model = Collection::class;
+    protected static ?string $model = PostType::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-square-2-stack';
+
+    protected static ?int $navigationSort = 0;
 
     public static function getNavigationGroup(): ?string
     {
@@ -29,19 +34,28 @@ class CollectionResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('stock.collection');
+        return __('core.type');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('stock.collections');
+        return __('core.types');
     }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                TextInput::make('name')
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('key', str_replace('-', '_', Str::slug($state))))
+                    ->required(),
+                TextInput::make('key')
+                    ->unique(ignoreRecord: true)
+                    ->required()
+                    ->readOnly(),
+                Toggle::make('is_active')
+                    ->label(__('core.is_active'))
             ]);
     }
 
@@ -49,7 +63,9 @@ class CollectionResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('name')->searchable()->sortable()->label(__('core.name')),
+                TextColumn::make('key')->searchable()->sortable()->label(__('core.key')),
+                ToggleColumn::make('is_active')->label(__('core.is_active'))
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -76,9 +92,9 @@ class CollectionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCollections::route('/'),
-            'create' => Pages\CreateCollection::route('/create'),
-            'edit' => Pages\EditCollection::route('/{record}/edit'),
+            'index' => Pages\ListPostTypes::route('/'),
+            'create' => Pages\CreatePostType::route('/create'),
+            'edit' => Pages\EditPostType::route('/{record}/edit'),
         ];
     }
 

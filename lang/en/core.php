@@ -38,11 +38,15 @@ return [
 
     // Common
     'name' => 'Name',
+    'title' => 'Title',
     'color_class' => 'Color class',
     'color' => 'Color',
     'notes' => 'Notes',
     'is_active' => 'Is active?',
     'status' => 'Status',
+    'statuses' => 'Statuses',
+    'type' => 'Type',
+    'types' => 'Types',
     'active' => 'Active',
     'is_inactive' => 'Is inactive?',
     'inactive' => 'Inactive',

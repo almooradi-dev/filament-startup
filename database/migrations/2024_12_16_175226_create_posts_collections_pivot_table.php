@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('collections', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('image')->nullable();
-            $table->tinyInteger('is_active')->default(0);
+        Schema::create('posts_collections_pivot', function (Blueprint $table) {
+            $table->foreignId('post_id')->constrained('posts')->cascadeOnDelete();
+            $table->foreignId('collection_id')->constrained('post_collections')->cascadeOnDelete();
             $table->timestamps();
-            $table->softDeletes();
+
+            $table->primary(['post_id', 'collection_id']);
         });
     }
 
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('collections');
+        Schema::dropIfExists('posts_collections_pivot');
     }
 };

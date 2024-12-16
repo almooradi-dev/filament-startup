@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Filament\Resources\Stock\CollectionResource\Pages;
+namespace App\Filament\Resources\Stock\PostTagResource\Pages;
 
-use App\Filament\Resources\Stock\CollectionResource;
+use App\Filament\Resources\Stock\PostTagResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditCollection extends EditRecord
+class EditPostTag extends EditRecord
 {
     use EditRecord\Concerns\Translatable;
 
-    protected static string $resource = CollectionResource::class;
+    protected static string $resource = PostTagResource::class;
 
     protected function getHeaderActions(): array
     {

@@ -2,12 +2,9 @@
 
 namespace App\Filament\Resources\Stock;
 
-use App\Filament\Resources\Stock\PostStatusResource\Pages;
-use App\Filament\Resources\Stock\PostStatusResource\RelationManagers;
-use App\Models\Stock\PostStatus;
-use App\Tables\Columns\ColorColumn;
-use Filament\Forms;
-use Filament\Forms\Components\ColorPicker;
+use App\Filament\Resources\Stock\PostCollectionResource\Pages;
+use App\Models\Stock\PostCollection;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -15,6 +12,7 @@ use Filament\Forms\Set;
 use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
@@ -22,15 +20,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
-class PostStatusResource extends Resource
+class PostCollectionResource extends Resource
 {
     use Translatable;
 
-    protected static ?string $model = PostStatus::class;
+    protected static ?string $model = PostCollection::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 1;
 
     public static function getNavigationGroup(): ?string
     {
@@ -39,12 +37,12 @@ class PostStatusResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('core.status');
+        return __('stock.collection');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('core.statuses');
+        return __('stock.collections');
     }
 
     public static function form(Form $form): Form
@@ -59,7 +57,8 @@ class PostStatusResource extends Resource
                     ->unique(ignoreRecord: true)
                     ->required()
                     ->readOnly(),
-                ColorPicker::make('color')
+                FileUpload::make('image')
+                    ->image()
                     ->required(),
                 Toggle::make('is_active')
                     ->label(__('core.is_active'))
@@ -71,10 +70,9 @@ class PostStatusResource extends Resource
     {
         return $table
             ->columns([
+                ImageColumn::make('image'),
                 TextColumn::make('name')->searchable()->sortable()->label(__('core.name')),
                 TextColumn::make('key')->searchable()->sortable()->label(__('core.key')),
-                ColorColumn::make('color')
-                    ->label(__('core.color')),
                 ToggleColumn::make('is_active')->label(__('core.is_active'))
             ])
             ->filters([
@@ -102,9 +100,9 @@ class PostStatusResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPostStatuses::route('/'),
-            'create' => Pages\CreatePostStatus::route('/create'),
-            'edit' => Pages\EditPostStatus::route('/{record}/edit'),
+            'index' => Pages\ListPostCollections::route('/'),
+            'create' => Pages\CreatePostCollection::route('/create'),
+            'edit' => Pages\EditPostCollection::route('/{record}/edit'),
         ];
     }
 

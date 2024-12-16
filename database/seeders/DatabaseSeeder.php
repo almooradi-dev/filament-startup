@@ -4,7 +4,10 @@ namespace Database\Seeders;
 
 use App\Models\Core\UserStatus;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Seeders\Stock\PostCollectionSeeder;
+use Database\Seeders\Stock\PostStatusSeeder;
+use Database\Seeders\Stock\PostTagSeeder;
+use Database\Seeders\Stock\PostTypeSeeder;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
@@ -18,6 +21,12 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserStatusSeeder::class,
+
+            // Stock
+            PostCollectionSeeder::class,
+            PostTagSeeder::class,
+            PostTypeSeeder::class,
+            PostStatusSeeder::class,
         ]);
 
         $superAdminRole = Role::create([

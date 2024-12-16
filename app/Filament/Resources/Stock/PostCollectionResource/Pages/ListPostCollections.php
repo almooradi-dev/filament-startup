@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Filament\Resources\Stock\TagResource\Pages;
+namespace App\Filament\Resources\Stock\PostCollectionResource\Pages;
 
-use App\Filament\Resources\Stock\TagResource;
+use App\Filament\Resources\Stock\PostCollectionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListTags extends ListRecords
+class ListPostCollections extends ListRecords
 {
     use ListRecords\Concerns\Translatable;
 
-    protected static string $resource = TagResource::class;
+    protected static string $resource = PostCollectionResource::class;
 
     protected function getHeaderActions(): array
     {
