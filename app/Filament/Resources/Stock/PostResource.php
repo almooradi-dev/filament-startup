@@ -67,10 +67,14 @@ class PostResource extends Resource
                 TextInput::make('location')
                     ->maxLength(250),
                 FileUpload::make('media')
-                    ->panelLayout('grid')
+                    // ->panelLayout('grid')
+                    ->required()
                     ->openable()
                     ->downloadable()
+                    ->maxFiles(1) // It can be multiple, but for now keep it as one file per post
                     ->multiple()
+                    ->disk('s3')
+                    ->directory('posts')
                     ->acceptedFileTypes([
                         // Images
                         'image/jpeg',

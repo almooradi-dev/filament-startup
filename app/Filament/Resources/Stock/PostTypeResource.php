@@ -48,7 +48,7 @@ class PostTypeResource extends Resource
             ->schema([
                 TextInput::make('name')
                     ->live(onBlur: true)
-                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('key', str_replace('-', '_', Str::slug($state))))
+                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('key', Str::slug($state)))
                     ->required(),
                 TextInput::make('key')
                     ->unique(ignoreRecord: true)

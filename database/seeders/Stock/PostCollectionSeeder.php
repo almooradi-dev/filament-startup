@@ -23,21 +23,21 @@ class PostCollectionSeeder extends Seeder
                 ],
             ],
             [
-                'key' => 'health_wellness',
+                'key' => 'health-wellness',
                 'name' => [
                     'en' => 'Health & Wellness',
                     'ar' => 'الصحة والعافية'
                 ],
             ],
             [
-                'key' => 'business_work',
+                'key' => 'business-work',
                 'name' => [
                     'en' => 'Business & Work',
                     'ar' => 'الإدارة والعمل'
                 ],
             ],
             [
-                'key' => 'textures_patterns',
+                'key' => 'textures-patterns',
                 'name' => [
                     'en' => 'Textures & Patterns',
                     'ar' => 'القوام والأنماط'
@@ -58,14 +58,14 @@ class PostCollectionSeeder extends Seeder
                 ],
             ],
             [
-                'key' => 'architecture_nteriors',
+                'key' => 'architecture-interiors',
                 'name' => [
                     'en' => 'Architecture & Interiors',
                     'ar' => 'الهندسة المعمارية والديكورات الداخلية'
                 ],
             ],
             [
-                'key' => 'street_photography',
+                'key' => 'street-photography',
                 'name' => [
                     'en' => 'Street photography',
                     'ar' => 'تصوير الشوارع'
@@ -86,7 +86,7 @@ class PostCollectionSeeder extends Seeder
                 ],
             ],
             [
-                'key' => 'nature_travel',
+                'key' => 'nature-travel',
                 'name' => [
                     'en' => 'Nature & Travel',
                     'ar' => 'الطبيعة والسفر'
