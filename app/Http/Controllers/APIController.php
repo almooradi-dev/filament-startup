@@ -32,7 +32,7 @@ class APIController extends Controller
      * @param integer $code
      * @return JsonResponse
      */
-    public function sendError(string $error, string|array $errorMessages = [], $code = 400, $key = ''): JsonResponse
+    public function sendError(string $error, string|array $errorMessages = [], $code = 500, $key = ''): JsonResponse
     {
         // TODO: Store error to log file
         

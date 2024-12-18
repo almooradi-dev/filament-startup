@@ -10,6 +10,7 @@ Route::get('/user', function (Request $request) {
 
 
 Route::get('posts', [PostAPIController::class, 'index']);
+Route::get('posts/show/{slug}', [PostAPIController::class, 'show']);
 
 
 // Route::post('/tokens/create', function (Request $request) {
