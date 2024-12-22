@@ -66,8 +66,8 @@ class PostResource extends Resource
                     ->readOnly(),
                 Textarea::make('description'),
                 Select::make('author')
-                    ->relationship(titleAttribute: 'first_name')
-                    ->getOptionLabelFromRecordUsing(fn (User $record) => $record->full_name)
+                    ->relationship(titleAttribute: 'first_name', modifyQueryUsing: fn($query) => $query->whereActive())
+                    ->getOptionLabelFromRecordUsing(fn(User $record) => $record->full_name)
                     ->required(),
                 TextInput::make('location')
                     ->maxLength(250),

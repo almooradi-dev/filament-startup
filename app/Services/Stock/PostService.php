@@ -56,11 +56,11 @@ class PostService
             'slug' => $post->slug,
             'location' => $post->location,
             'description' => $post->description,
-            'author' => [
+            'author' => $post->author ? [
                 'id' => $post->author->id,
                 'name' => $post->author->full_name,
                 'avatar' => $post->author->avatar_url,
-            ],
+            ] : null,
             'type' => $post->type?->key,
             'media' => $media,
             'collections' => $postCollections,
