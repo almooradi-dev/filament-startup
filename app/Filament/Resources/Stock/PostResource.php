@@ -6,6 +6,7 @@ use App\Filament\Resources\Stock\PostResource\Pages;
 use App\Filament\Resources\Stock\PostResource\RelationManagers;
 use App\Models\Stock\Post;
 use App\Models\Stock\PostStatus;
+use App\Models\User;
 use App\Tables\Columns\ColorColumn;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
@@ -64,6 +65,10 @@ class PostResource extends Resource
                     ->required()
                     ->readOnly(),
                 Textarea::make('description'),
+                Select::make('author')
+                    ->relationship(titleAttribute: 'first_name')
+                    ->getOptionLabelFromRecordUsing(fn (User $record) => $record->full_name)
+                    ->required(),
                 TextInput::make('location')
                     ->maxLength(250),
                 FileUpload::make('media')

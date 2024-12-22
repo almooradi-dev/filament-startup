@@ -56,13 +56,19 @@ class PostService
             'slug' => $post->slug,
             'location' => $post->location,
             'description' => $post->description,
+            'author' => [
+                'id' => $post->author->id,
+                'name' => $post->author->full_name,
+                'avatar' => $post->author->avatar_url,
+            ],
+            'type' => $post->type?->key,
             'media' => $media,
             'collections' => $postCollections,
             'tags' => $postTags,
         ];
     }
 
-    public static function getBaseQuery($with = ['type', 'status', 'collections', 'tags'], $statuses = ['published']): Builder
+    public static function getBaseQuery($with = ['type', 'status', 'collections', 'tags', 'author'], $statuses = ['published']): Builder
     {
         return Post::query()
             ->with($with)
