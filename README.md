@@ -34,3 +34,11 @@ Examples:
 - viewAny_User
 - create_UserType
 - forceDeleteAny_PostCategory
+
+
+
+
+
+# TODO
+- Set all users column to nullable in the main branch
+- Add username

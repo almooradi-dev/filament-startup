@@ -22,7 +22,8 @@ class Post extends Model
 
     public $translatable = [
         'title',
-        'description'
+        'description',
+        'location',
     ];
 
     /**
