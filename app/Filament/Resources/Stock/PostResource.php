@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Tables\Columns\ColorColumn;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -65,12 +66,19 @@ class PostResource extends Resource
                     ->required()
                     ->readOnly(),
                 Textarea::make('description'),
-                Select::make('author')
-                    ->relationship(titleAttribute: 'first_name', modifyQueryUsing: fn($query) => $query->whereActive())
+                Select::make('author_id')
+                    ->relationship('author', 'first_name', modifyQueryUsing: fn($query) => $query->whereActive())
                     ->getOptionLabelFromRecordUsing(fn(User $record) => $record->full_name)
                     ->required(),
-                TextInput::make('location')
-                    ->maxLength(250),
+                Grid::make('location')
+                    ->schema([
+                        TextInput::make('location')
+                            ->maxLength(250),
+                        TextInput::make('location_lat')
+                            ->maxLength(250),
+                        TextInput::make('location_lng')
+                            ->maxLength(250),
+                    ])->columns(3),
                 FileUpload::make('media')
                     // ->panelLayout('grid')
                     ->required()

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Translatable\HasTranslations;
 
 class Post extends Model
@@ -85,5 +86,20 @@ class Post extends Model
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(PostTag::class, 'posts_tags_pivot', 'post_id', 'tag_id');
+    }
+
+    /**
+     * Get "media_url" attribute
+     *
+     * @return string|null
+     */
+    public function getMediaUrlAttribute(): ?string
+    {
+        if (count($this->media) > 0)
+        {
+            return Storage::disk('s3')->url($this->media[0]);
+        }
+
+        return null;
     }
 }

@@ -15,10 +15,10 @@ class PostService
             // TODO: Set different sizes
             $mediaPath = $post->media[0];
             $media = [
-                'original' => asset('/storage/' . $mediaPath),
-                'lg' => asset('/storage/' . $mediaPath),
-                'md' => asset('/storage/' . $mediaPath),
-                'sm' => asset('/storage/' . $mediaPath),
+                'original' => $post->media_url,
+                'lg' => $post->media_url,
+                'md' => $post->media_url,
+                'sm' => $post->media_url,
             ];
         }
 
