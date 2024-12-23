@@ -63,6 +63,7 @@ class PostService
             ] : null,
             'type' => $post->type?->key,
             'media' => $media,
+            'thumbnail_url' => $post->thumbnail_url,
             'collections' => $postCollections,
             'tags' => $postTags,
         ];

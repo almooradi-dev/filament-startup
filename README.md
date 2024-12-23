@@ -40,5 +40,4 @@ Examples:
 
 
 # TODO
-- Set all users column to nullable in the main branch
-- Add username
+- Import users avatar, bio, social media, can hire....
