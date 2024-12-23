@@ -10,16 +10,24 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
+use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\Support\ImageFactory;
+use Spatie\MediaLibrary\Support\TemporaryDirectory;
 use Spatie\Translatable\HasTranslations;
+use Illuminate\Support\Str;
+use Spatie\MediaLibrary\MediaCollections\Filesystem;
 
-class Post extends Model
+class Post extends Model implements HasMedia
 {
-    use SoftDeletes, HasTranslations;
+    use SoftDeletes, HasTranslations, InteractsWithMedia;
 
     protected $guarded = [];
 
     protected $casts = [
-        'media' => 'array',
+        'media_paths' => 'array',
     ];
 
     public $translatable = [
@@ -27,6 +35,59 @@ class Post extends Model
         'description',
         'location',
     ];
+
+    public static $mediaCollection = 'posts'; 
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        if (!$media) {
+            return;
+        }
+
+        if ($media->getTypeFromMime() == 'image') {
+            $temporaryDirectory = TemporaryDirectory::create();
+            $baseImage = app(Filesystem::class)->copyFromMediaLibrary(
+                $media,
+                $temporaryDirectory->path(Str::random(16) . '.' . $media->extension)
+            );
+            $image = ImageFactory::load($baseImage);
+
+            $width = $image->getWidth();
+            $height = $image->getHeight();
+
+            $thumb_width = 400;
+            $sm_min_width = 400;
+            $md_min_width = 600;
+            $lg_min_width = 800;
+
+            // // Thumbnail: Fixed width, maintain aspect ratio
+            $this->addMediaConversion('thumb')
+                ->width($thumb_width);
+
+            // Small: 25% of original size
+            if ($width > $sm_min_width) {
+                $this->addMediaConversion('sm')
+                    ->fit(Fit::Crop, (int)($width * 0.25), (int)($height * 0.25));
+            }
+
+            // Medium: 50% of original size
+            if ($width > $md_min_width) {
+                $this->addMediaConversion('md')
+                    ->fit(Fit::Crop, (int)($width * 0.5), (int)($height * 0.5));
+            }
+
+            // Large: 75% of original size
+            if ($width > $lg_min_width) {
+                $this->addMediaConversion('lg')
+                    ->fit(Fit::Crop, (int)($width * 0.75), (int)($height * 0.75));
+            }
+        }
+    }
+
+    public function shouldDeletePreservingMedia(): bool
+    {
+        return true;
+    }
 
     /**
      * Scope where status
@@ -89,60 +150,4 @@ class Post extends Model
         return $this->belongsToMany(PostTag::class, 'posts_tags_pivot', 'post_id', 'tag_id');
     }
 
-    /**
-     * Get "media_url" attribute
-     *
-     * @return string|null
-     */
-    public function getMediaUrlAttribute(): ?string
-    {
-        if (count($this->media) > 0) {
-            return Storage::disk('s3')->url($this->media[0]);
-        }
-
-        return null;
-    }
-
-    /**
-     * Get "thumbnail_url" attribute
-     *
-     * @return ?string
-     */
-    public function getThumbnailUrlAttribute(): ?string
-    {
-        try {
-            if (count($this->media) == 0 || $this->type->key == 'video') {
-                return null;
-            }
-
-            // Get the original image path from your model attribute
-            $originalImagePath = $this->media[0];
-
-            // Generate the thumbnail path by appending '-thumbnail' before the extension
-            $thumbnailPath = pathinfo($originalImagePath, PATHINFO_DIRNAME) . '/' .
-                pathinfo($originalImagePath, PATHINFO_FILENAME) . '-thumbnail.' . pathinfo($originalImagePath, PATHINFO_EXTENSION);
-
-            // Check if the thumbnail exists in S3
-            if (Storage::disk('s3')->exists($thumbnailPath)) {
-                // Return the URL of the existing thumbnail
-                return Storage::disk('s3')->url($thumbnailPath);
-            }
-
-            // If thumbnail does not exist, create and upload it
-            $image = ImageManager::imagick()->read(Storage::disk('s3')->get($originalImagePath));
-            $image->scaleDown(width: 400);
-
-            // Save the thumbnail to S3
-            $thumbnailContents = (string) $image->encode(); // Get the image as a string
-
-            // Upload the thumbnail to S3
-            Storage::disk('s3')->put($thumbnailPath, $thumbnailContents);
-
-            // Return the URL of the uploaded thumbnail
-            return Storage::disk('s3')->url($thumbnailPath);
-        } catch (\Exception $e) {
-            // TODO: Log error
-            return null;
-        }
-    }
 }

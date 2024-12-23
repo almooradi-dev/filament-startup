@@ -11,14 +11,15 @@ class PostService
     {
         // Media (we are accepting now one file per post)
         $media = [];
-        if (count($post->media) > 0) {
-            // TODO: Set different sizes
-            $mediaPath = $post->media[0];
+        $postMedia = $post->getFirstMedia('posts');
+        if ($postMedia) {
+            // TODO: Generate conversion if not exists
             $media = [
-                'original' => $post->media_url,
-                'lg' => $post->media_url,
-                'md' => $post->media_url,
-                'sm' => $post->media_url,
+                'original' => $postMedia->original_url,
+                'lg' => $postMedia->hasGeneratedConversion('lg') ? $postMedia->getUrl('lg') : null,
+                'md' => $postMedia->hasGeneratedConversion('md') ? $postMedia->getUrl('md') : null,
+                'sm' => $postMedia->hasGeneratedConversion('sm') ? $postMedia->getUrl('sm') : null,
+                'thumb' => $postMedia->hasGeneratedConversion('thumb') ? $postMedia->getUrl('thumb') : null,
             ];
         }
 
@@ -63,7 +64,6 @@ class PostService
             ] : null,
             'type' => $post->type?->key,
             'media' => $media,
-            'thumbnail_url' => $post->thumbnail_url,
             'collections' => $postCollections,
             'tags' => $postTags,
         ];

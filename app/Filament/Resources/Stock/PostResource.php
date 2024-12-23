@@ -12,6 +12,7 @@ use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -20,6 +21,7 @@ use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -79,7 +81,7 @@ class PostResource extends Resource
                         TextInput::make('location_lng')
                             ->maxLength(250),
                     ])->columns(3),
-                FileUpload::make('media')
+                SpatieMediaLibraryFileUpload::make('media')
                     // ->panelLayout('grid')
                     ->required()
                     ->openable()
@@ -87,7 +89,8 @@ class PostResource extends Resource
                     ->maxFiles(1) // It can be multiple, but for now keep it as one file per post
                     ->multiple()
                     ->disk('s3')
-                    ->directory('posts')
+                    ->collection(Post::$mediaCollection)
+                    ->conversion('thumb') // Default conversion for display purposes
                     ->acceptedFileTypes([
                         // Images
                         'image/jpeg',
@@ -124,7 +127,7 @@ class PostResource extends Resource
     {
         return $table
             ->columns([
-                ImageColumn::make('media'),
+                // SpatieMediaLibraryImageColumn::make('media')->conversion('thumb'),
                 TextColumn::make('title')->searchable()->sortable()->label(__('core.title')),
                 TextColumn::make('type.name')
                     ->searchable()

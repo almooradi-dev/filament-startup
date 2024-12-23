@@ -14,6 +14,13 @@ php artisan shield:generate --all
 php artisan storage:link
 ```
 
+**Queue**
+```
+nohup php artisan queue:work --daemon &
+```
+
+Used to generate spatie media conversions and responsive images
+
 # Optimizing Filament for production
 
 ```
