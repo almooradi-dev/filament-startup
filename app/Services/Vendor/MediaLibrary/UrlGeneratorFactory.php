@@ -25,7 +25,7 @@ class UrlGeneratorFactory extends \Spatie\MediaLibrary\Support\UrlGenerator\UrlG
         /** @var \Spatie\MediaLibrary\Support\UrlGenerator\UrlGenerator $urlGenerator */
         $urlGenerator = app($urlGeneratorClass);
 
-        $pathGenerator = PathGeneratorFactory::create();
+        $pathGenerator = PathGeneratorFactory::create($media);
 
         $urlGenerator
             ->setMedia($media)

@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class PostService
 {
+    public static array $mediaConversions = ['lg', 'md', 'sm', 'thumb'];
+
     public static function generateConversions(Post $post, $conversions = ['thumb', 'sm', 'md', 'lg'], bool $force = false): void
     {
         $medias = $post->getMedia(Post::$mediaCollection);
@@ -28,7 +30,7 @@ class PostService
             }
         }
     }
-    public static function getStructuredPostData(Post $post): array
+    public static function getStructuredPostData(Post $post, ?array $mediaConversions = null): array
     {
         // Media (we are accepting now one file per post)
         $media = [];
@@ -37,11 +39,13 @@ class PostService
             // TODO: Generate conversion if not exists
             $media = [
                 'original' => $postMedia->getUrl(),
-                'lg' => $postMedia->hasGeneratedConversion('lg') ? $postMedia->getUrl('lg') : null,
-                'md' => $postMedia->hasGeneratedConversion('md') ? $postMedia->getUrl('md') : null,
-                'sm' => $postMedia->hasGeneratedConversion('sm') ? $postMedia->getUrl('sm') : null,
-                'thumb' => $postMedia->hasGeneratedConversion('thumb') ? $postMedia->getUrl('thumb') : null,
             ];
+
+            foreach ($mediaConversions ?? static::$mediaConversions as $mediaConversion) {
+                if ($postMedia->hasGeneratedConversion($mediaConversion)) {
+                    $media[$mediaConversion] = $postMedia->getUrl($mediaConversion);
+                }
+            }
         }
 
         // Collections
@@ -98,7 +102,7 @@ class PostService
             ->whereHas('status', fn($query) => $query->whereIn('key', $statuses));
     }
 
-    public static function get($search = '', $types = null, $tags = null, $collections = null, $authorUsername = null, $take = 20, $offset = 0, $shuffle = false)
+    public static function get($search = '', $types = null, $tags = null, $collections = null, $authorUsername = null, $take = 20, $offset = 0, $shuffle = false, ?array $mediaConversions = null)
     {
         $posts = static::getBaseQuery()
             // Search
@@ -132,7 +136,7 @@ class PostService
         // TODO: Create a resource
         $data = [];
         foreach ($posts as $post) {
-            $data[] = static::getStructuredPostData($post);
+            $data[] = static::getStructuredPostData($post, mediaConversions: $mediaConversions);
         }
 
         return $data;

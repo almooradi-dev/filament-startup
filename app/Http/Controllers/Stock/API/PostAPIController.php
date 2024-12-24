@@ -35,7 +35,18 @@ class PostAPIController extends APIController
             $filterCollections = $request->get('collections', '');
             $filterCollections = $filterCollections ? explode(',', $filterCollections) : [];
 
-            $posts = PostService::get(search: $search, types: $filterTypes, tags: $filterTags, collections: $filterCollections, take: $take, offset: $offset, shuffle: $shuffle);
+            $posts = PostService::get(
+                search: $search,
+                types: $filterTypes,
+                tags: $filterTags,
+                collections: $filterCollections,
+                take: $take,
+                offset: $offset,
+                shuffle: $shuffle,
+                mediaConversions: [
+                    'thumb'
+                ]
+            );
 
             return $this->sendResponse($posts);
         } catch (HttpException $e) {

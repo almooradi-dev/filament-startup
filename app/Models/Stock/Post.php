@@ -43,17 +43,26 @@ class Post extends Model implements HasMedia
         if (!$media) {
             return;
         }
-
         if ($media->getTypeFromMime() == 'image') {
-            $temporaryDirectory = TemporaryDirectory::create();
-            $baseImage = app(Filesystem::class)->copyFromMediaLibrary(
-                $media,
-                $temporaryDirectory->path(Str::random(16) . '.' . $media->extension)
-            );
-            $image = ImageFactory::load($baseImage);
+            $width = $media->custom_properties['width'] ?? null;
+            $height = $media->custom_properties['height'] ?? null;
 
-            $width = $image->getWidth();
-            $height = $image->getHeight();
+            // Get "width" and "height"
+            if (!$width || !$height) {
+                $temporaryDirectory = TemporaryDirectory::create();
+                $baseImage = app(Filesystem::class)->copyFromMediaLibrary(
+                    $media,
+                    $temporaryDirectory->path(Str::random(16) . '.' . $media->extension)
+                );
+                $image = ImageFactory::load($baseImage);
+                
+                $width = $image->getWidth();
+                $height = $image->getHeight();
+
+                $media->setCustomProperty('width', $width);
+                $media->setCustomProperty('height', $height);
+                $media->save();
+            }
 
             $thumb_width = 400;
             $sm_min_width = 400;
