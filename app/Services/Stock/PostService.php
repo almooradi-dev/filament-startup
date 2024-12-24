@@ -7,11 +7,32 @@ use Illuminate\Database\Eloquent\Builder;
 
 class PostService
 {
+    public static function generateConversions(Post $post, $conversions = ['thumb', 'sm', 'md', 'lg'], bool $force = false): void
+    {
+        $medias = $post->getMedia(Post::$mediaCollection);
+        foreach ($medias as $media) {
+            if ($force) {
+                $media->generateConversionsOnMedia();
+            } else {
+                $hasAllConversions = true;
+                foreach ($conversions as $conversion) {
+                    if (!$media->hasGeneratedConversion($conversion)) {
+                        $hasAllConversions = false;
+                        break;
+                    }
+                }
+
+                if (!$hasAllConversions) {
+                    $media->generateConversionsOnMedia();
+                }
+            }
+        }
+    }
     public static function getStructuredPostData(Post $post): array
     {
         // Media (we are accepting now one file per post)
         $media = [];
-        $postMedia = $post->getFirstMedia('posts');
+        $postMedia = $post->getMedia(Post::$mediaCollection);
         if ($postMedia) {
             // TODO: Generate conversion if not exists
             $media = [

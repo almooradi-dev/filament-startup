@@ -42,94 +42,94 @@ Route::get('dev-only/test', function () {
     // // }
 });
 
-Route::get('dev-only/import-wp', function () {
-    set_time_limit(500);
+// Route::get('dev-only/import-wp', function () {
+//     set_time_limit(500);
 
-    // $files = Storage::disk('s3')->allFiles();
-    // dd($files);
+//     $files = Storage::disk('s3')->allFiles();
+//     dd($files);
 
-    $filePath = '/home/ahmant/Downloads/ulz_listings.json';
-    $jsonData = file_get_contents($filePath);
-    $data = json_decode($jsonData, true);
+//     $filePath = '/home/ahmant/Downloads/ulz_listings.json';
+//     $jsonData = file_get_contents($filePath);
+//     $data = json_decode($jsonData, true);
 
-    try {
-        DB::beginTransaction();
-        $lastRow = null;
-        // foreach ($data as $row) {
-        foreach (array_slice($data, 0, 500) as $row) {
-            $lastRow = $row;
+//     try {
+//         DB::beginTransaction();
+//         $lastRow = null;
+//         // foreach ($data as $row) {
+//         foreach (array_slice($data, 0, 500) as $row) {
+//             $lastRow = $row;
 
-            // Author
-            $author = User::firstOrCreate(
-                ['username' => $row['user_username']],
-                [
-                    'first_name' => $row['user_display_name'],
-                    'password' => Hash::make($row['user_username'] . '@123')
-                ]
-            );
+//             // Author
+//             $author = User::firstOrCreate(
+//                 ['username' => $row['user_username']],
+//                 [
+//                     'first_name' => $row['user_display_name'],
+//                     'password' => Hash::make($row['user_username'] . '@123')
+//                 ]
+//             );
 
-            // Post
-            $post = Post::create([
-                'title' => $row['title'],
-                'slug' => $row['slug'],
-                'description'   => $row['description'],
-                'location' => $row['location_name'],
-                'location_lat'  => $row['location_lat'],
-                'location_lng'  => $row['location_lng'],
+//             // Post
+//             $post = Post::create([
+//                 'title' => $row['title'],
+//                 'slug' => $row['slug'],
+//                 'description'   => $row['description'],
+//                 'location' => $row['location_name'],
+//                 'location_lat'  => $row['location_lat'],
+//                 'location_lng'  => $row['location_lng'],
 
-                'author_id' => $author->id,
-                'status_id' => $row['status_key'] == 'published' ? 1 : 0,
-                'type_id'   => $row['video_path'] ? 2 : 1,
+//                 'author_id' => $author->id,
+//                 'status_id' => $row['status_key'] == 'published' ? 1 : 0,
+//                 'type_id'   => $row['video_path'] ? 2 : 1,
 
-                // 'media' => [
-                //     // $row['image_path'] ?? $row['video_path']
-                // ],
+//                 // 'media' => [
+//                 //     // $row['image_path'] ?? $row['video_path']
+//                 // ],
 
-                'created_at' => "2024-10-09 18:04:58",
-                'updated_at' => "2024-10-09 18:04:58"
-            ]);
+//                 'created_at' => "2024-10-09 18:04:58",
+//                 'updated_at' => "2024-10-09 18:04:58"
+//             ]);
 
-            // Media (Download from S3 then re-upload)
-            $mediaPath = $row['image_path'] ?? $row['video_path'];
-            if (!Storage::disk('s3')->exists($mediaPath)) {
-                $mediaPath = $mediaPath ? pathinfo($mediaPath, PATHINFO_DIRNAME) . '/' .
-                    pathinfo($mediaPath, PATHINFO_FILENAME) . '-scaled.' . pathinfo($mediaPath, PATHINFO_EXTENSION) : null;
-            }
-            if (Storage::disk('s3')->exists($mediaPath)) {
-                $fileName = basename($mediaPath);
-                $mediaURL = Storage::disk('s3')->url($mediaPath);
-                $fileContent = file_get_contents($mediaURL);  // Assuming $mediaPath is the URL
+//             // Media (Download from S3 then re-upload)
+//             $mediaPath = $row['image_path'] ?? $row['video_path'];
+//             if (!Storage::disk('s3')->exists($mediaPath)) {
+//                 $mediaPath = $mediaPath ? pathinfo($mediaPath, PATHINFO_DIRNAME) . '/' .
+//                     pathinfo($mediaPath, PATHINFO_FILENAME) . '-scaled.' . pathinfo($mediaPath, PATHINFO_EXTENSION) : null;
+//             }
+//             if (Storage::disk('s3')->exists($mediaPath)) {
+//                 $fileName = basename($mediaPath);
+//                 $mediaURL = Storage::disk('s3')->url($mediaPath);
+//                 $fileContent = file_get_contents($mediaURL);  // Assuming $mediaPath is the URL
 
-                // Create a temporary file to store the file content
-                $tempFilePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileName;
-                file_put_contents($tempFilePath, $fileContent);
+//                 // Create a temporary file to store the file content
+//                 $tempFilePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileName;
+//                 file_put_contents($tempFilePath, $fileContent);
 
-                // Upload the file to the 'posts' media collection on S3
-                $post->addMedia($tempFilePath)
-                    ->toMediaCollection(Post::$mediaCollection, 's3');
+//                 // Upload the file to the 'posts' media collection on S3
+//                 $post->addMedia($tempFilePath)
+//                     ->toMediaCollection(Post::$mediaCollection, 's3');
 
-                // Clean up the temporary file after upload
-                // unlink($tempFilePath);
-            } else {
-                echo 'No media for post "' . $post->id . '"';
-                echo '<br>';
-            }
+//                 // Clean up the temporary file after upload
+//                 // unlink($tempFilePath);
+//             } else {
+//                 echo 'No media for post "' . $post->id . '"';
+//                 echo '<br>';
+//             }
 
-            // Sync Collections
-            if (!empty($row['collections_ids'])) {
-                $post->collections()->sync($row['collections_ids']);
-            }
+//             // Sync Collections
+//             if (!empty($row['collections_ids'])) {
+//                 $post->collections()->sync($row['collections_ids']);
+//             }
 
-            // Sync Tags
-            if (!empty($row['tags_ids'])) {
-                $post->tags()->sync($row['tags_ids']);
-            }
-        }
+//             // Sync Tags
+//             if (!empty($row['tags_ids'])) {
+//                 $post->tags()->sync($row['tags_ids']);
+//             }
+//         }
 
-        DB::commit();
-    } catch (\Exception $e) {
-        DB::rollBack();
+//         DB::commit();
+//     } catch (\Exception $e) {
+//         DB::rollBack();
 
-        dd($e, $lastRow);
-    }
-});
+//         dd($e, $lastRow);
+//     }
+// });

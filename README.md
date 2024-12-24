@@ -47,4 +47,10 @@ Examples:
 
 
 # TODO
-- Import users avatar, bio, social media, can hire....
+- Import users data:
+    - avatar
+    - bio
+    - social media
+    - can hire
+    - email
+    - phone
