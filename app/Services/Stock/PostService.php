@@ -32,11 +32,11 @@ class PostService
     {
         // Media (we are accepting now one file per post)
         $media = [];
-        $postMedia = $post->getMedia(Post::$mediaCollection);
+        $postMedia = $post->getFirstMedia(Post::$mediaCollection);
         if ($postMedia) {
             // TODO: Generate conversion if not exists
             $media = [
-                'original' => $postMedia->original_url,
+                'original' => $postMedia->getUrl(),
                 'lg' => $postMedia->hasGeneratedConversion('lg') ? $postMedia->getUrl('lg') : null,
                 'md' => $postMedia->hasGeneratedConversion('md') ? $postMedia->getUrl('md') : null,
                 'sm' => $postMedia->hasGeneratedConversion('sm') ? $postMedia->getUrl('sm') : null,

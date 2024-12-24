@@ -39,7 +39,8 @@ return [
     /*
      * The fully qualified class name of the media model.
      */
-    'media_model' => Spatie\MediaLibrary\MediaCollections\Models\Media::class,
+    // 'media_model' => Spatie\MediaLibrary\MediaCollections\Models\Media::class,
+    'media_model' => App\Models\Vendor\MediaLibrary\Media::class,
 
     /*
      * When enabled, media collections will be serialised using the default
@@ -77,7 +78,7 @@ return [
      * The class that contains the strategy for determining a media file's path.
      */
     // 'path_generator' => Spatie\MediaLibrary\Support\PathGenerator\DefaultPathGenerator::class,
-    'path_generator' => App\Services\MediaLibrary\ByCollectionPathGenerator::class,
+    'path_generator' => App\Service\Vendor\MediaLibrary\ByCollectionPathGenerator::class,
 
     /*
      * The class that contains the strategy for determining how to remove files.

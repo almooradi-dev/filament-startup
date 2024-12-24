@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\MediaLibrary;
+namespace App\Service\Vendor\MediaLibrary;
 
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\Support\PathGenerator\PathGenerator;
