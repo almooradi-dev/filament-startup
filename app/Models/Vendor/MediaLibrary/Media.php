@@ -2,7 +2,7 @@
 
 namespace App\Models\Vendor\MediaLibrary;
 
-use App\Service\Vendor\MediaLibrary\UrlGeneratorFactory;
+use App\Services\Vendor\MediaLibrary\UrlGeneratorFactory;
 
 class Media extends \Spatie\MediaLibrary\MediaCollections\Models\Media
 {

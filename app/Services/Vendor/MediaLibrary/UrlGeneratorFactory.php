@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Vendor\MediaLibrary;
+namespace App\Services\Vendor\MediaLibrary;
 
 use Spatie\MediaLibrary\Conversions\ConversionCollection;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\InvalidUrlGenerator;
